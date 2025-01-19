@@ -1,5 +1,5 @@
 import 'package:demoflu/demoflu.dart';
-import 'package:simdart_demo/get_started/get_started_page.dart';
+import 'package:simdart_demo/production_line/production_line_page.dart';
 
 void main() {
   DemoFluApp app = DemoFluApp(title: 'SimDart', rootMenus: _rootMenus);
@@ -7,8 +7,11 @@ void main() {
 }
 
 List<DemoMenuItem> get _rootMenus =>
-    [_getStarted];
+    [_examples];
 
-DemoMenuItem get _getStarted =>
-    DemoMenuItem('Get started', page: () => GetStartedPage());
+DemoMenuItem get _examples =>
+    DemoMenuItem('Examples', children: [_productionLine]);
+
+DemoMenuItem get _productionLine =>
+    DemoMenuItem('Production line', page: () => ProductionLinePage());
 
