@@ -14,6 +14,7 @@ dependencies:
   demoflu: ^2.5.0
   simdart: #^0.1.0-rc.2
     path: ../simdart
+  chart_sparkline: ^1.1.1
 
 dev_dependencies:
   flutter_test:

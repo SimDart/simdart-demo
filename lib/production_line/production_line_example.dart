@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:simdart_demo/production_line/production_line.dart';
+import 'package:simdart_demo/production_line/radio_button.dart';
+import 'package:simdart_demo/production_line/result_card.dart';
+import 'package:simdart_demo/production_line/table_builder.dart';
+
+import 'sparkline_resource.dart';
 
 class ProductionLineExample extends StatefulWidget {
   const ProductionLineExample({super.key});
@@ -11,59 +16,25 @@ class ProductionLineExample extends StatefulWidget {
 class ProductionLineExampleState extends State<ProductionLineExample> {
   bool loading = false;
   int duration = 0;
+
+
+  ValueNotifier<int> packers = ValueNotifier(5);
+  ValueNotifier<int> assemblers = ValueNotifier(3);
+  ValueNotifier<int> inspectors=ValueNotifier(2);
   ValueNotifier<int> requestedItemCount = ValueNotifier(20);
-  ValueNotifier<int> requestInterval = ValueNotifier(5);
+  ValueNotifier<int> requestInterval = ValueNotifier(1);
   ValueNotifier<int> assemblyDuration = ValueNotifier(5);
-  ValueNotifier<int> inspectionDuration = ValueNotifier(5);
-  ValueNotifier<int> packagingDuration = ValueNotifier(2);
+  ValueNotifier<int> inspectionDuration = ValueNotifier(2);
+  ValueNotifier<int> packagingDuration = ValueNotifier(3);
   ValueNotifier<int> rejectionProbability = ValueNotifier(20);
   SimulationResult? simulationResult;
+
+  EdgeInsets padding = EdgeInsets.fromLTRB(8, 4, 8, 4);
 
   @override
   Widget build(BuildContext context) {
     List<Widget> children = [
-      RadioGroupWidget(
-          title: 'Requested item count:',
-          option1: 20,
-          option2: 40,
-          option3: 60,
-          selectedValue: requestedItemCount,
-          isEnabled: !loading),
-      RadioGroupWidget(
-          title: 'Request interval:',
-          option1: 5,
-          option2: 7,
-          option3: 9,
-          selectedValue: requestInterval,
-          isEnabled: !loading),
-      RadioGroupWidget(
-          title: 'Assembly duration:',
-          option1: 5,
-          option2: 10,
-          option3: 15,
-          selectedValue: assemblyDuration,
-          isEnabled: !loading),
-      RadioGroupWidget(
-          title: 'Inspection duration:',
-          option1: 3,
-          option2: 5,
-          option3: 7,
-          selectedValue: inspectionDuration,
-          isEnabled: !loading),
-      RadioGroupWidget(
-          title: 'Rejection probability (%):',
-          option1: 10,
-          option2: 15,
-          option3: 20,
-          selectedValue: rejectionProbability,
-          isEnabled: !loading),
-      RadioGroupWidget(
-          title: 'Packaging duration:',
-          option1: 2,
-          option2: 4,
-          option3: 6,
-          selectedValue: packagingDuration,
-          isEnabled: !loading),
+      _buildForm(context),
       ElevatedButton(
           onPressed: !loading ? _run : null, child: Text('Run: $duration'))
     ];
@@ -71,12 +42,89 @@ class ProductionLineExampleState extends State<ProductionLineExample> {
       children.add(CircularProgressIndicator());
     } else if (simulationResult != null) {
       children.add(ResultGrid(result: simulationResult!));
+
+      children.add(Wrap(spacing: 16,
+          runSpacing: 16,children: [SparklineResource(title: 'Assemblers usage',
+          simulationResult: simulationResult!,
+          resourceId: 'a'),
+        SparklineResource(title: 'Inspectors usage',
+            simulationResult: simulationResult!,
+            resourceId: 'i'),
+        SparklineResource(title: 'Packers usage',
+            simulationResult: simulationResult!,
+            resourceId: 'p')]));
     }
 
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 8,
+        spacing: 16,
         children: children);
+  }
+
+  Widget _buildForm(BuildContext context) {
+    TableBuilder tableBuilder = TableBuilder();
+
+
+
+    tableBuilder.row()
+    ..add(_buildText('Assemblers:'))
+    ..add(RadioButton(value: 3, selectedValue: assemblers))
+    ..add(RadioButton(value: 5, selectedValue: assemblers))
+    ..add(RadioButton(value: 7, selectedValue: assemblers));
+
+    tableBuilder.row()
+      ..add(_buildText('Inspectors:'))
+      ..add(RadioButton(value: 2, selectedValue: inspectors))
+      ..add(RadioButton(value: 5, selectedValue: inspectors))
+      ..add(RadioButton(value: 8, selectedValue: inspectors));
+
+    tableBuilder.row()
+    ..add(_buildText('Packers:'))
+    ..add(RadioButton(value: 5, selectedValue: packers))
+    ..add(RadioButton(value: 10, selectedValue: packers))
+    ..add(RadioButton(value: 15, selectedValue: packers));
+
+    tableBuilder.row()
+      ..add(_buildText('Requested items:'))
+      ..add(RadioButton(value: 20, selectedValue: requestedItemCount))
+      ..add(RadioButton(value: 40, selectedValue: requestedItemCount))
+      ..add(RadioButton(value: 60, selectedValue: requestedItemCount));
+
+    tableBuilder.row()
+      ..add(_buildText('Request interval (min):'))
+      ..add(RadioButton(value: 1, selectedValue: requestInterval))
+      ..add(RadioButton(value: 10, selectedValue: requestInterval))
+      ..add(RadioButton(value: 20, selectedValue: requestInterval));
+
+    tableBuilder.row()
+      ..add(_buildText('Assembly duration (min):'))
+      ..add(RadioButton(value: 5, selectedValue: assemblyDuration))
+      ..add(RadioButton(value: 10, selectedValue: assemblyDuration))
+      ..add(RadioButton(value: 15, selectedValue: assemblyDuration));
+
+    tableBuilder.row()
+      ..add(_buildText('Inspection duration (min):'))
+      ..add(RadioButton(value: 2, selectedValue: inspectionDuration))
+      ..add(RadioButton(value: 4, selectedValue: inspectionDuration))
+      ..add(RadioButton(value: 8, selectedValue: inspectionDuration));
+
+    tableBuilder.row()
+      ..add(_buildText('Rejection probability (%):'))
+      ..add(RadioButton(value: 10, selectedValue: rejectionProbability))
+      ..add(RadioButton(value: 15, selectedValue: rejectionProbability))
+      ..add(RadioButton(value: 20, selectedValue: rejectionProbability));
+
+    tableBuilder.row()
+      ..add(_buildText('Packaging duration (min):'))
+      ..add(RadioButton(value: 3, selectedValue: packagingDuration))
+      ..add(RadioButton(value: 6, selectedValue: packagingDuration))
+      ..add(RadioButton(value: 9, selectedValue: packagingDuration));
+
+    return tableBuilder.build();
+  }
+
+  Widget _buildText(String text) {
+    return Text(text);
   }
 
   void _run() {
@@ -85,6 +133,9 @@ class ProductionLineExampleState extends State<ProductionLineExample> {
     });
 
     ProductionLine productionLine = ProductionLine(
+      assemblerCount:assemblers.value,
+        inspectorCount:inspectors.value,
+        packerCount:packers.value,
         inspectionDuration: inspectionDuration.value,
         packagingDuration: packagingDuration.value,
         assemblyDuration: assemblyDuration.value,
@@ -108,139 +159,35 @@ class ResultGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      physics: NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      crossAxisSpacing: 10,
-      mainAxisSpacing: 10,
-      crossAxisCount: 4,
+    return Wrap(
+      spacing: 16,
+      runSpacing: 16,
       children: <Widget>[
         ResultCard(value: result.assembleCount.toString(), text: 'Assembled'),
-        ResultCard(value: result.packagedCount.toString(), text: 'Packaged'),
-        ResultCard(value: result.rejectedCount.toString(), text: 'Rejected'),
+        ResultCard(
+            value: result.rejectedCount.toString(),
+            text: 'Rejected',
+            textColor: Colors.red),
+        ResultCard(
+            value: result.packagedCount.toString(),
+            text: 'Packaged',
+            textColor: Colors.green),
         ResultCard(
             value: result.duration.toString(), text: 'Total duration (min)'),
-        ResultCard(
-            value: '${result.rejectionRate.toStringAsFixed(2)}%',
-            text: 'Rejection rate'),
         ResultCard(
             value: result.assembleRate.toStringAsFixed(2),
             text: 'Assemble rate (items/min)'),
         ResultCard(
+            value: '${result.rejectionRate.toStringAsFixed(2)}%',
+            text: 'Rejection rate',
+            textColor: Colors.red),
+        ResultCard(
             value: result.packagingRate.toStringAsFixed(2),
-            text: 'Packaging rate (items/min)'),
+            text: 'Packaging rate (items/min)',
+            textColor: Colors.green),
         ResultCard(
             value: result.averageProductionDuration.toStringAsFixed(2),
             text: 'Avg. production duration (min/item)'),
-      ],
-    );
-  }
-}
-
-class ResultCard extends StatelessWidget {
-  const ResultCard({super.key, required this.value, required this.text});
-
-  final String value;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        child: Padding(
-            padding: EdgeInsets.all(8),
-            child: Column(children: [Text(value), Text(text)])));
-  }
-}
-
-class RadioGroupWidget extends StatelessWidget {
-  final String title;
-  final int option1, option2, option3;
-  final ValueNotifier<int> selectedValue;
-  final bool isEnabled;
-
-  const RadioGroupWidget({
-    super.key,
-    required this.title,
-    required this.option1,
-    required this.option2,
-    required this.option3,
-    required this.selectedValue,
-    this.isEnabled = true,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Row(
-          spacing: 16,
-          children: [
-            Text(title),
-            ValueListenableBuilder<int>(
-              valueListenable: selectedValue,
-              builder: (context, value, child) {
-                return Row(
-                  children: [
-                    Radio<int>(
-                      value: option1,
-                      groupValue: value,
-                      onChanged: isEnabled
-                          ? (newValue) {
-                              if (newValue != null) {
-                                selectedValue.value = newValue;
-                              }
-                            }
-                          : null,
-                    ),
-                    Text(option1.toString()),
-                  ],
-                );
-              },
-            ),
-            ValueListenableBuilder<int>(
-              valueListenable: selectedValue,
-              builder: (context, value, child) {
-                return Row(
-                  children: [
-                    Radio<int>(
-                      value: option2,
-                      groupValue: value,
-                      onChanged: isEnabled
-                          ? (newValue) {
-                              if (newValue != null) {
-                                selectedValue.value = newValue;
-                              }
-                            }
-                          : null,
-                    ),
-                    Text(option2.toString()),
-                  ],
-                );
-              },
-            ),
-            ValueListenableBuilder<int>(
-              valueListenable: selectedValue,
-              builder: (context, value, child) {
-                return Row(
-                  children: [
-                    Radio<int>(
-                      value: option3,
-                      groupValue: value,
-                      onChanged: isEnabled
-                          ? (newValue) {
-                              if (newValue != null) {
-                                selectedValue.value = newValue;
-                              }
-                            }
-                          : null,
-                    ),
-                    Text(option3.toString()),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
       ],
     );
   }

@@ -5,7 +5,7 @@ import 'package:simdart/simdart.dart';
 /// Represents the configuration for a production line simulation algorithm.
 class ProductionLine {
   /// Creates an instance of the algorithm configuration.
-  ProductionLine({
+  ProductionLine({required this.packerCount, required this.assemblerCount,required this.inspectorCount,
     required this.requestedItemCount,
     required this.requestInterval,
     required this.assemblyDuration,
@@ -22,6 +22,10 @@ class ProductionLine {
   int rejectedCount = 0;
 
   bool get reject => _random.nextDouble() <= rejectionProbability;
+
+  final int packerCount;
+  final int assemblerCount;
+  final int inspectorCount;
 
   /// The total number of items requested in the simulation.
   final int requestedItemCount;
@@ -41,17 +45,27 @@ class ProductionLine {
   /// The rejection rate during inspection, represented as a percentage (0-100).
   final double rejectionProbability;
 
+  final List<SimulationTrack> tracks =[];
+
   Future<SimulationResult> run() async {
     SimDart sim = SimDart(onTrack: (track) {
+      tracks.add(track);
       if (track.operation != Operation.resume) {
         print('${track.name}:${track.time}:${track.operation}');
       }
     });
 
+
+
+    sim.addResource(LimitedResource(id: 'p', capacity: packerCount));
+    sim.addResource(LimitedResource(id: 'i', capacity: inspectorCount));
+    sim.addResource(LimitedResource(id: 'a', capacity: assemblerCount));
+
     for (int i = 0; i < requestedItemCount; i++) {
-      sim.processAt(
-          event: _assemblyItem,
+      sim.process(
+          _assemblyItem,
           start: i * requestInterval,
+          resourceId: 'a',
           name: 'assemblyItem');
     }
 
@@ -77,13 +91,14 @@ class ProductionLine {
       packagingRate: packagingRate,
       averageProductionDuration: averageProductionDuration,
       duration: duration,
+      tracks: tracks
     );
   }
 
   void _assemblyItem(EventContext context) async {
     await context.wait(assemblyDuration);
     assembledCount++;
-    context.sim.process(event: _inspectItem, name: 'inspectItem');
+    context.sim.process(_inspectItem, name: 'inspectItem', resourceId: 'i');
   }
 
   void _inspectItem(EventContext context) async {
@@ -91,7 +106,7 @@ class ProductionLine {
     if (reject) {
       rejectedCount++;
     } else {
-      context.sim.process(event: _packItem, name: 'packItem');
+      context.sim.process(_packItem, name: 'packItem', resourceId: 'p');
     }
   }
 
@@ -111,6 +126,7 @@ class SimulationResult {
   final double packagingRate;
   final double averageProductionDuration;
   final int duration;
+  final List<SimulationTrack> tracks;
 
   SimulationResult({
     required this.assembleCount,
@@ -121,5 +137,6 @@ class SimulationResult {
     required this.packagingRate,
     required this.averageProductionDuration,
     required this.duration,
+    required this.tracks
   });
 }
