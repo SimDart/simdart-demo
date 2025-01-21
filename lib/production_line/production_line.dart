@@ -5,7 +5,10 @@ import 'package:simdart/simdart.dart';
 /// Represents the configuration for a production line simulation algorithm.
 class ProductionLine {
   /// Creates an instance of the algorithm configuration.
-  ProductionLine({required this.packerCount, required this.assemblerCount,required this.inspectorCount,
+  ProductionLine({
+    required this.packerCount,
+    required this.assemblerCount,
+    required this.inspectorCount,
     required this.requestedItemCount,
     required this.requestInterval,
     required this.assemblyDuration,
@@ -45,28 +48,22 @@ class ProductionLine {
   /// The rejection rate during inspection, represented as a percentage (0-100).
   final double rejectionProbability;
 
-  final List<SimulationTrack> tracks =[];
+  final List<SimulationTrack> tracks = [];
 
   Future<SimulationResult> run() async {
-    SimDart sim = SimDart(onTrack: (track) {
-      tracks.add(track);
-      if (track.operation != Operation.resume) {
-        print('${track.name}:${track.time}:${track.operation}');
-      }
-    });
-
-
+    SimDart sim = SimDart(
+        executionPriority: ExecutionPriority.low,
+        onTrack: (track) {
+          tracks.add(track);
+        });
 
     sim.addResource(LimitedResource(id: 'p', capacity: packerCount));
     sim.addResource(LimitedResource(id: 'i', capacity: inspectorCount));
     sim.addResource(LimitedResource(id: 'a', capacity: assemblerCount));
 
     for (int i = 0; i < requestedItemCount; i++) {
-      sim.process(
-          _assemblyItem,
-          start: i * requestInterval,
-          resourceId: 'a',
-          name: 'assemblyItem');
+      sim.process(_assemblyItem,
+          start: i * requestInterval, resourceId: 'a', name: 'assemblyItem');
     }
 
     await sim.run();
@@ -83,16 +80,15 @@ class ProductionLine {
         assembledCount > 0 ? duration / assembledCount : 0;
 
     return SimulationResult(
-      assembleCount: assembledCount,
-      packagedCount: packagedCount,
-      rejectedCount: rejectedCount,
-      rejectionRate: rejectionRate,
-      assembleRate: assembleRate,
-      packagingRate: packagingRate,
-      averageProductionDuration: averageProductionDuration,
-      duration: duration,
-      tracks: tracks
-    );
+        assembleCount: assembledCount,
+        packagedCount: packagedCount,
+        rejectedCount: rejectedCount,
+        rejectionRate: rejectionRate,
+        assembleRate: assembleRate,
+        packagingRate: packagingRate,
+        averageProductionDuration: averageProductionDuration,
+        duration: duration,
+        tracks: tracks);
   }
 
   void _assemblyItem(EventContext context) async {
@@ -128,15 +124,14 @@ class SimulationResult {
   final int duration;
   final List<SimulationTrack> tracks;
 
-  SimulationResult({
-    required this.assembleCount,
-    required this.packagedCount,
-    required this.rejectedCount,
-    required this.rejectionRate,
-    required this.assembleRate,
-    required this.packagingRate,
-    required this.averageProductionDuration,
-    required this.duration,
-    required this.tracks
-  });
+  SimulationResult(
+      {required this.assembleCount,
+      required this.packagedCount,
+      required this.rejectedCount,
+      required this.rejectionRate,
+      required this.assembleRate,
+      required this.packagingRate,
+      required this.averageProductionDuration,
+      required this.duration,
+      required this.tracks});
 }

@@ -6,12 +6,10 @@ void main() {
   app.run();
 }
 
-List<DemoMenuItem> get _rootMenus =>
-    [_examples];
+List<DemoMenuItem> get _rootMenus => [_examples];
 
 DemoMenuItem get _examples =>
     DemoMenuItem('Examples', children: [_productionLine]);
 
 DemoMenuItem get _productionLine =>
     DemoMenuItem('Production line', page: () => ProductionLinePage());
-

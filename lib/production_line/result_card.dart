@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class ResultCard extends StatelessWidget {
   const ResultCard(
       {super.key,
+      required this.icon,
       required this.value,
       required this.text,
       this.textColor = Colors.black});
 
+  final IconData icon;
   final Color textColor;
   final String value;
   final String text;
@@ -23,7 +25,16 @@ class ResultCard extends StatelessWidget {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(value, style: TextStyle(fontSize: 28, color: textColor)),
+                  Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(icon, color: textColor, size: 26),
+                        SizedBox(width: 8.0), // Espaço entre ícone e texto
+                        Text(value,
+                            style: TextStyle(
+                                fontSize: 28, color: textColor)), // Texto
+                      ]),
                   Text(text,
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 14, color: textColor))

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class RadioButton extends StatelessWidget{
-
-  const RadioButton({super.key, required this.value, required this.selectedValue});
+class RadioButton extends StatelessWidget {
+  const RadioButton(
+      {super.key, required this.value, required this.selectedValue});
 
   final int value;
   final ValueNotifier<int> selectedValue;
@@ -26,5 +26,4 @@ class RadioButton extends StatelessWidget{
           ]);
         });
   }
-
 }
