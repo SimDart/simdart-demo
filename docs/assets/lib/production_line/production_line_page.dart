@@ -6,5 +6,8 @@ class ProductionLinePage extends DemoFluPage {
   @override
   void buildSections(BuildContext context, PageSections sections) {
     sections.widget((context) => ProductionLineExample());
+
+    sections.code('lib/production_line/production_line.dart',
+        title: 'Simulation code:');
   }
 }

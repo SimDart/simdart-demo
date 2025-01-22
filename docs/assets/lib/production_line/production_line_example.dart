@@ -26,7 +26,7 @@ class ProductionLineExampleState extends State<ProductionLineExample> {
   ValueNotifier<int> assemblyDuration = ValueNotifier(5);
   ValueNotifier<int> inspectionDuration = ValueNotifier(2);
   ValueNotifier<int> packagingDuration = ValueNotifier(3);
-  ValueNotifier<int> rejectionProbability = ValueNotifier(20);
+  ValueNotifier<int> rejectionProbability = ValueNotifier(10);
   SimulationResult? simulationResult;
 
   EdgeInsets padding = EdgeInsets.fromLTRB(8, 4, 8, 4);

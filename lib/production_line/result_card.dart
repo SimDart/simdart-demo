@@ -16,28 +16,40 @@ class ResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        width: 200,
+        width: 160,
+        height: 120,
         child: Container(
             decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: Colors.grey[300]!)),
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.all(12),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 8,
                 children: [
-                  Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                  // Espaço entre ícone e texto
+                  Text(value, style: TextStyle(fontSize: 34, color: textColor)),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
                       children: [
-                        Icon(icon, color: textColor, size: 26),
-                        SizedBox(width: 8.0), // Espaço entre ícone e texto
-                        Text(value,
-                            style: TextStyle(
-                                fontSize: 28, color: textColor)), // Texto
-                      ]),
-                  Text(text,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, color: textColor))
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
+                          child: Icon(icon, color: textColor, size: 18),
+                        ),
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
+                          child: SizedBox(
+                              width: 8.0), // Espaço entre ícone e texto
+                        ),
+                        TextSpan(
+                          text: text,
+                          style: TextStyle(fontSize: 14, color: textColor),
+                        ),
+                      ],
+                    ),
+                  )
                 ])));
   }
 }

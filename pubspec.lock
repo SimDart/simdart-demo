@@ -61,10 +61,10 @@ packages:
     dependency: "direct main"
     description:
       name: davi
-      sha256: "84f73b883bbf3540d1ca4d1cfffdb4d453a565a2055e6d1f8b324accc35a3bff"
+      sha256: a2deb39adcd007e75c5e795e601460d6ea8b0ee585e422317a3a2eb36d30848c
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.0"
+    version: "4.0.1"
   demoflu:
     dependency: "direct main"
     description:
@@ -198,7 +198,7 @@ packages:
       path: "../simdart"
       relative: true
     source: path
-    version: "0.1.0-rc.3"
+    version: "0.1.0-rc.4"
   sky_engine:
     dependency: transitive
     description: flutter

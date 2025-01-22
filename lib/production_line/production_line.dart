@@ -1,10 +1,7 @@
-import 'dart:math';
-
 import 'package:simdart/simdart.dart';
 
-/// Represents the configuration for a production line simulation algorithm.
+/// Production line simulation algorithm.
 class ProductionLine {
-  /// Creates an instance of the algorithm configuration.
   ProductionLine({
     required this.packerCount,
     required this.assemblerCount,
@@ -17,14 +14,10 @@ class ProductionLine {
     required this.rejectionProbability,
   });
 
-  final Random _random = Random();
-
   /// Metrics to track
   int assembledCount = 0;
   int packagedCount = 0;
   int rejectedCount = 0;
-
-  bool get reject => _random.nextDouble() <= rejectionProbability;
 
   final int packerCount;
   final int assemblerCount;
@@ -61,15 +54,16 @@ class ProductionLine {
     sim.resources.limited(id: 'i', capacity: inspectorCount);
     sim.resources.limited(id: 'a', capacity: assemblerCount);
 
-    for (int i = 0; i < requestedItemCount; i++) {
-      sim.process(
-          event: _assemblyItem,
-          start: i * requestInterval,
-          resourceId: 'a',
-          name: 'assembly');
-    }
+    sim.repeatProcess(
+        event: _assemblyItem,
+        resourceId: 'a',
+        name: 'assembly',
+        interval: Interval.fixed(
+            fixedInterval: requestInterval, untilCount: requestedItemCount));
 
     await sim.run();
+
+    // Result
 
     final int duration = sim.duration!;
 
@@ -102,7 +96,7 @@ class ProductionLine {
 
   void _inspectItem(EventContext context) async {
     await context.wait(inspectionDuration);
-    if (reject) {
+    if (context.sim.random.nextDouble() <= rejectionProbability) {
       rejectedCount++;
     } else {
       context.sim.process(event: _packItem, name: 'pack', resourceId: 'p');

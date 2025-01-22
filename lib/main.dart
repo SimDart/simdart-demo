@@ -2,7 +2,7 @@ import 'package:demoflu/demoflu.dart';
 import 'package:simdart_demo/production_line/production_line_page.dart';
 
 void main() {
-  DemoFluApp app = DemoFluApp(title: 'SimDart', rootMenus: _rootMenus);
+  DemoFluApp app = DemoFluApp(title: 'SimDart (0.1.0)', rootMenus: _rootMenus);
   app.run();
 }
 
